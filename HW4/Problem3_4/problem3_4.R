@@ -20,7 +20,7 @@ parset <- with(ss, simpleTheme(pch=pchr[species], col=colr[species]))
 
 print(splom(rawData[, c(1:4)], groups=rawData$V5,
       par.settings=parset,
-      vernames=c('Sepal\nLength', 'Sepal\nWidth',
+      varnames=c('Sepal\nLength', 'Sepal\nWidth',
                  'Petal\nLength', 'Petal\nWidth'),
       key=list(text=list(speciesnames),
                points=list(pch=pchr), columns=3)))
