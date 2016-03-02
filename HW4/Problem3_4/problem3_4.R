@@ -29,15 +29,16 @@ dev.off()
 # Part b
 postscript('part_b.eps')
 
-pComp <- princomp(rawData[, 1:4])
-eigs <- pComp$loadings
-centered <- sweep(rawData[, 1:4], MARGIN=2, pComp$center, FUN="-") #Center data
-rotate <- centered * eigs
+pca <- prcomp(rawData[, 1:4])
+
+rotate <- scale(rawData[1:4], center=TRUE, scale=FALSE) %*% pca$rotation
+
 plot(rotate[,1], rotate[,2],
      col=colr[rawData$V5],
      xlab="Principle Component 1",
      ylab="Principle Component 2",
-     main="Principle Components of Iris Dataset")
+     main="Principle Components of Iris Dataset",
+     asp=1)
 dev.off()
 
 # Part c
@@ -51,5 +52,6 @@ plot(outVect[,1], outVect[,2],
      col=colr[rawData$V5],
      xlab="Discriminative Direction 1",
      ylab="Discriminative Direction 2",
-     main="Discriminative Directions of Iris Dataset")
+     main="Discriminative Directions of Iris Dataset",
+     asp=1)
 dev.off()
