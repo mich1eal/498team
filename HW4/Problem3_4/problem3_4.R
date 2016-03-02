@@ -1,5 +1,5 @@
 # 3/1/2016
-# Michael Miller and Awkshay Shetty for CS 498
+# Michael Miller and Akshay Shetty for CS 498
 
 rm(list=ls())
 
