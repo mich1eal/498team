@@ -14,7 +14,9 @@ load('fixed_data.mat');
 W = nan(D,T);
 
 %init P and pi
-P = normr(rand(T,V));   %random init, but rows should be normalized
+P = (rand(T,V));   %random init, but rows should be normalized
+P = diag(1./sum(P,2))*P;
+
 pies = (1/T)*ones(1,T); %vector init with all 1/30
 
 %vector used to compute denominator of E-step
@@ -24,19 +26,22 @@ logAj = zeros(1,T);
 del_likelihood = 100;
 tolerance = .1;
 prev_likelihood = inf;
+current_likelihood = 1;
 %%
 
 count = 0;
 %while change in likelihood is greater than tolerance
 while(del_likelihood > tolerance)
-% for z=1:1
+% for z=1:20
     
     count = count+1;
-    display(num2str(count));
+    display(num2str(current_likelihood));
     
     %Before using P, do smoothing and normalize rows
-    P(P==0) = 0.05;
-    P = normr(P);
+    while(min(min(P)) == 0)
+        P(P==0) = 0.05;
+        P = diag(1./sum(P,2))*P;
+    end
     
     current_likelihood = 0;
     %do E step to get W from P and pi
