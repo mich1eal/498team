@@ -23,23 +23,22 @@ pies = (1/T)*ones(1,T); %vector init with all 1/30
 logAj = zeros(1,T);
 
 %likelihood for termination
-del_likelihood = 100;
-tolerance = .0001;
+rel_likelihood = 1;
+tolerance = 1e-6;
 prev_likelihood = inf;
 current_likelihood = 1;
+
+% smooth_w = 0.0001;
+smooth_w = 1/V;
+smooth_P = 0.0005;
+
+display('Step: Relative Likelihood')
 %%
 count = 0;
 %while change in likelihood is greater than tolerance
-while(abs(del_likelihood/current_likelihood) > tolerance)
-% for z=1:20
+while(abs(rel_likelihood) > tolerance)
     
-    count = count+1;
-    display(num2str(current_likelihood));
-    
-    %Before using P, do smoothing and normalize rows
-%     while(min(min(P)) < 0.0005)
-%         P(P<0.0005) = 0.005;
-%     end
+    %normalize P rowise
     P = diag(1./sum(P,2))*P;    
     
     current_likelihood = 0;
@@ -62,7 +61,7 @@ while(abs(del_likelihood/current_likelihood) > tolerance)
     end
     
     %additive smoothing for W
-    W(W<0.0001) = 0.0001;
+    W(W<smooth_w) = smooth_w;
     W = diag(1./sum(W,2))*W;    
     
     %do M step to get P and pi from w
@@ -70,8 +69,13 @@ while(abs(del_likelihood/current_likelihood) > tolerance)
     pies = sum(W)/D;
     
     %compute change in likelihood
-    del_likelihood = abs(current_likelihood - prev_likelihood);
+    rel_likelihood = abs((current_likelihood - prev_likelihood)/current_likelihood);
     prev_likelihood = current_likelihood;
+    
+    %display
+    display([num2str(count) ': ' num2str(rel_likelihood)]);
+    count = count+1;
+    
 end
 
 %generate plot and create table called 'TA'
