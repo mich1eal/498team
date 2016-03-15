@@ -74,4 +74,5 @@ while(abs(del_likelihood/current_likelihood) > tolerance)
     prev_likelihood = current_likelihood;
 end
 
+%generate plot and create table called 'TA'
 create_results;
