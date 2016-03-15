@@ -24,24 +24,23 @@ logAj = zeros(1,T);
 
 %likelihood for termination
 del_likelihood = 100;
-tolerance = .1;
+tolerance = .0001;
 prev_likelihood = inf;
 current_likelihood = 1;
 %%
-
 count = 0;
 %while change in likelihood is greater than tolerance
-while(del_likelihood > tolerance)
+while(abs(del_likelihood/current_likelihood) > tolerance)
 % for z=1:20
     
     count = count+1;
     display(num2str(current_likelihood));
     
     %Before using P, do smoothing and normalize rows
-    while(min(min(P)) == 0)
-        P(P==0) = 0.05;
-        P = diag(1./sum(P,2))*P;
-    end
+%     while(min(min(P)) < 0.0005)
+%         P(P<0.0005) = 0.005;
+%     end
+    P = diag(1./sum(P,2))*P;    
     
     current_likelihood = 0;
     %do E step to get W from P and pi
@@ -62,6 +61,10 @@ while(del_likelihood > tolerance)
         W(i,:) = exp(logY);
     end
     
+    %additive smoothing for W
+    W(W<0.0001) = 0.0001;
+    W = diag(1./sum(W,2))*W;    
+    
     %do M step to get P and pi from w
     P = (data'*W)';
     pies = sum(W)/D;
@@ -70,3 +73,5 @@ while(del_likelihood > tolerance)
     del_likelihood = abs(current_likelihood - prev_likelihood);
     prev_likelihood = current_likelihood;
 end
+
+create_results;
