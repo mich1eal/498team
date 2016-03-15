@@ -14,7 +14,9 @@ load('fixed_data.mat');
 W = nan(D,T);
 
 %init P and pi
-P = (rand(T,V));   %random init, but rows should be normalized
+% P = (rand(T,V));   %random init, but rows should be normalized
+P = C;
+P(P<0) = 0;
 P = diag(1./sum(P,2))*P;
 
 pies = (1/T)*ones(1,T); %vector init with all 1/30
@@ -30,7 +32,7 @@ current_likelihood = 1;
 
 % smooth_w = 0.0001;
 smooth_w = 1/V;
-smooth_P = 0.0005;
+smooth_P = 1/V;
 
 display('Step: Relative Likelihood')
 %%
@@ -38,7 +40,8 @@ count = 0;
 %while change in likelihood is greater than tolerance
 while(abs(rel_likelihood) > tolerance)
     
-    %normalize P rowise
+    %smooth normalize P rowise
+    P(P<smooth_P) = smooth_P;
     P = diag(1./sum(P,2))*P;    
     
     current_likelihood = 0;
