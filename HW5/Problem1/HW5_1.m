@@ -8,6 +8,7 @@ D = 1500;   %number of documents/data points (I)
 
 %load data. consists of:
 %data: D x V
+%C: output from k-means
 load('fixed_data.mat');
 
 %init W. value doesn't matter since it's computed in E-step
@@ -15,9 +16,9 @@ W = nan(D,T);
 
 %init P and pi
 % P = (rand(T,V));   %random init, but rows should be normalized
-P = C;
-P(P<0) = 0;
-P = diag(1./sum(P,2))*P;
+P = C;  %centers obtained from k-means (comes from fixed_data.mat)
+P(P<0) = 0; %some values are slightly negative ~ -1e-18
+P = diag(1./sum(P,2))*P;    %normalize
 
 pies = (1/T)*ones(1,T); %vector init with all 1/30
 
