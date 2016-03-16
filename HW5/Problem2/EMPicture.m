@@ -12,6 +12,7 @@ function[] = EMPicture(filename, clusters)
     % Put into array of pixels, needs to be non-int in order for calculations
     % to work.
     data = double(reshape(raw, x*y, z));
+    data = data + 255;
 
     T = clusters; %V = number of cluster centers(K)
     %V = number of unique words (K)
@@ -35,11 +36,11 @@ function[] = EMPicture(filename, clusters)
 
     %likelihood for termination
     rel_likelihood = 1;
-    tolerance = 1e-3;
+    tolerance = 5e-4;
     prev_likelihood = inf;
     current_likelihood = 1;
 
-    smooth_P = .01;
+    smooth_P = .001;
 
     display('Step: Relative Likelihood')
     %%
@@ -102,6 +103,7 @@ function[] = EMPicture(filename, clusters)
     end
 
     rawOut = mu(rawOut, :);
+    rawOut = rawOut - 255;
 
     out = reshape(uint8(rawOut), [x, y, z]);
     
