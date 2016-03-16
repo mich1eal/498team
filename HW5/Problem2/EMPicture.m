@@ -1,4 +1,9 @@
-function[] = EMPicture(filename, clusters)
+function[] = EMPicture(filename, clusters, outFileName)
+
+    if nargin < 3
+       outFileName = filename; 
+    end
+
     tic
     dispStr = strcat({'Begining image '}, filename, {' with '},...
         num2str(clusters), {' clusters.'});
@@ -8,11 +13,16 @@ function[] = EMPicture(filename, clusters)
     % Load image
     [raw, ~] = imread(strcat('test_images/', filename,'.jpg'));
     [x, y, z] = size(raw);
+    
+    % Scale it up
+    offset = 8;
+    multiplier = 2;
 
     % Put into array of pixels, needs to be non-int in order for calculations
     % to work.
+    
     data = double(reshape(raw, x*y, z));
-    data = data + 255;
+    data = (data + offset) * multiplier;
 
     T = clusters; %V = number of cluster centers(K)
     %V = number of unique words (K)
@@ -103,11 +113,11 @@ function[] = EMPicture(filename, clusters)
     end
 
     rawOut = mu(rawOut, :);
-    rawOut = rawOut - 255;
+    rawOut = (rawOut / multiplier) - offset;
 
     out = reshape(uint8(rawOut), [x, y, z]);
     
-    title = strcat('out/',filename, '_segmented', num2str(clusters),'.jpg');
+    title = strcat('out/',outFileName, '_segmented', num2str(clusters),'.jpg');
 
     imwrite(out, title,'Quality', 100);
     toc
